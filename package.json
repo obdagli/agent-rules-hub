@@ -1,0 +1,38 @@
+{
+  "name": "agent-rules-hub",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local-first dashboard for discovering, inspecting, and editing rules, skills, and generated instructions for AI coding CLIs.",
+  "license": "MIT",
+  "homepage": "https://github.com/obdagli/agent-rules-hub",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obdagli/agent-rules-hub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/obdagli/agent-rules-hub/issues"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "codex",
+    "claude-code",
+    "gemini-cli",
+    "opencode",
+    "dashboard",
+    "developer-tools",
+    "local-first",
+    "prompt-engineering",
+    "config-management"
+  ],
+  "type": "module",
+  "scripts": {
+    "render:instructions": "node scripts/render-instructions.mjs",
+    "test": "node --import ./tests/setup-generated.mjs --test tests/*.mjs",
+    "dashboard": "node dashboard/server.mjs",
+    "dashboard:dev": "AGENT_RULES_DASHBOARD_PORT=4848 node dashboard/server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,35 @@
+# .gitignore for Agent Rules Hub
+
+# Local memory bank (personal development notes)
+memory-bank/
+
+# Runtime data and state
+.omx/
+
+# Runtime-generated outputs
+generated/
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Build output
+dist/
+build/

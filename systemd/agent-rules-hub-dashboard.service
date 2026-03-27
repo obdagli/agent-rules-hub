@@ -1,0 +1,13 @@
+[Unit]
+Description=Agent Rules Hub Dashboard
+After=network.target
+
+[Service]
+Type=simple
+Environment=AGENT_RULES_DASHBOARD_PORT=4848
+ExecStart=__NPM_BIN__ --prefix __REPO_ROOT__ run dashboard
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target
