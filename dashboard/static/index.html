@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="agent-rules-token" content="__AGENT_RULES_TOKEN__" />
+    <title>Agent Rules Hub</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+
+    <div class="workspace-frame">
+      <aside class="app-rail" aria-label="Dashboard sections">
+        <div class="rail-brand">
+          <p class="eyebrow">Local Hub</p>
+          <h1>Agent Rules Hub</h1>
+        </div>
+
+        <nav class="rail-nav">
+          <button type="button" class="rail-button active" data-section-target="profiles">Profiles</button>
+          <button type="button" class="rail-button" data-section-target="files">Files</button>
+          <button type="button" class="rail-button" data-section-target="bench">Bench</button>
+          <button type="button" class="rail-button" data-section-target="operations">Operations</button>
+        </nav>
+
+        <div class="rail-footer">
+          <p class="muted">Local dashboard. Token-guarded API. Discovered text-file edits only.</p>
+        </div>
+      </aside>
+
+      <main class="workspace-stage">
+        <header class="workspace-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Agent Rules Hub</p>
+            <h2>See your agent stack clearly.</h2>
+            <p class="lede">
+              See discovered rules, skills, configs, and generated instructions in one local workspace,
+              with clear boundaries between hub-managed and external sources.
+            </p>
+          </div>
+
+          <div class="hero-actions">
+            <button id="refreshState" class="button button-primary">Refresh Snapshot</button>
+            <button id="bootstrapHome" class="button">Run Bootstrap</button>
+          </div>
+
+          <div id="heroStats" class="hero-stats"></div>
+          <div id="generatedAt" class="hero-meta muted"></div>
+          <div id="actionSummary" class="action-summary action-summary-idle">Ready.</div>
+        </header>
+
+        <section id="warnings" class="warnings"></section>
+
+        <section id="profilesSection" class="workspace-section section-active" data-section-panel="profiles">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Profiles</p>
+              <h2>CLI Status &amp; Delivery</h2>
+            </div>
+          </div>
+          <div class="profiles-layout">
+            <div id="toolGrid" class="tool-grid profile-overview-grid"></div>
+            <div id="profileSpotlight" class="profile-spotlight panel"></div>
+          </div>
+        </section>
+
+        <section id="filesSection" class="workspace-section" data-section-panel="files" hidden>
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Files</p>
+              <h2>Discovered Files Workspace</h2>
+            </div>
+          </div>
+
+          <div class="files-layout">
+            <aside class="panel panel-sidebar">
+              <div class="panel-header">
+                <h3>Editable Files</h3>
+                <input id="fileSearch" type="search" placeholder="Search files" />
+              </div>
+              <div id="fileList" class="file-list"></div>
+            </aside>
+
+            <section class="panel panel-main">
+              <div class="panel-header">
+                <div>
+                  <h3 id="editorTitle">Select a file</h3>
+                  <p id="editorPath" class="muted">
+                    Choose a discovered rule, skill, generated file, benchmark, or runtime config.
+                    Runtime config edits can affect CLI behavior immediately.
+                  </p>
+                </div>
+                <div class="editor-actions">
+                  <button id="discardFile" class="button button-secondary" disabled>Discard</button>
+                  <button id="saveFile" class="button button-primary" disabled>Save</button>
+                </div>
+              </div>
+              <textarea id="editor" spellcheck="false" placeholder="Select a file to view its contents."></textarea>
+            </section>
+          </div>
+        </section>
+
+        <section id="benchSection" class="workspace-section" data-section-panel="bench" hidden>
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Bench</p>
+              <h2>Prompt Bench</h2>
+            </div>
+          </div>
+          <div id="benchGrid" class="bench-grid"></div>
+        </section>
+
+        <section id="operationsSection" class="workspace-section" data-section-panel="operations" hidden>
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Operations</p>
+              <h2>Guarded Operations</h2>
+            </div>
+          </div>
+
+          <section class="toolbar">
+            <div class="toolbar-block toolbar-block-stack">
+              <span class="toolbar-label">Codex Orchestrator</span>
+              <div id="codexModeSummary" class="operation-mode-summary">Current mode: hybrid-tools-only</div>
+              <div class="toolbar-actions">
+                <button class="button button-small" data-codex-mode="omx-primary">OMX Primary</button>
+                <button class="button button-small" data-codex-mode="hybrid-tools-only">Hybrid Tools Only</button>
+              </div>
+            </div>
+            <div class="toolbar-block toolbar-block-stack">
+              <span class="toolbar-label">OpenCode Harness Profile</span>
+              <div id="opencodeModeSummary" class="operation-mode-summary">Current mode: none</div>
+              <div class="toolbar-actions">
+                <button class="button button-small" data-plugin-mode="oh-my-opencode">Oh My OpenAgent</button>
+                <button class="button button-small" data-plugin-mode="none">None</button>
+              </div>
+            </div>
+            <div class="toolbar-block toolbar-block-stack">
+              <span class="toolbar-label">Shared Skills Visibility (Codex/OpenCode)</span>
+              <div id="visibilitySummary" class="operation-mode-summary">Shared skills: optional discovery</div>
+              <div class="toolbar-actions">
+                <button class="button button-small" data-visibility-mode="on">On</button>
+                <button class="button button-small" data-visibility-mode="off">Off</button>
+              </div>
+            </div>
+            <div class="toolbar-block toolbar-status">
+              <span class="toolbar-label">Operation Result</span>
+              <div id="actionOutput" class="action-output action-output-idle">Select an operation to run.</div>
+            </div>
+          </section>
+
+          <section class="security-strip">
+            <article class="security-note">
+              <strong>Local only.</strong>
+              <span>Dashboard binds to `127.0.0.1` and API calls use a session token.</span>
+            </article>
+            <article class="security-note">
+              <strong>Runtime configs apply immediately.</strong>
+              <span>Claude Code, Codex, and OpenCode config files are editable here and may contain real secrets.</span>
+            </article>
+            <article class="security-note">
+              <strong>OpenCode writes are guarded.</strong>
+              <span>Harness profile and instruction wiring update through validated actions, not raw file edits.</span>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <template id="toolCardTemplate">
+      <article class="tool-card">
+        <header class="tool-card-header">
+          <div>
+            <p class="tool-kicker"></p>
+            <h3 class="tool-title"></h3>
+          </div>
+          <span class="status-pill"></span>
+        </header>
+        <p class="tool-summary"></p>
+        <p class="tool-preferred-profile"></p>
+        <div class="profile-glance"></div>
+
+        <div class="tool-section">
+          <h4>Instruction Layers</h4>
+          <div class="instruction-stack"></div>
+        </div>
+        <div class="tool-section">
+          <h4>Delivery</h4>
+          <div class="fact-list"></div>
+        </div>
+        <div class="tool-section">
+          <h4>Active Sources</h4>
+          <div class="skill-sources"></div>
+        </div>
+        <div class="tool-section">
+          <h4>Capabilities</h4>
+          <div class="chip-row capabilities"></div>
+        </div>
+        <div class="tool-section">
+          <h4>Status Details</h4>
+          <ul class="plain-list status-details"></ul>
+        </div>
+        <div class="tool-section">
+          <h4>Constraints</h4>
+          <ul class="plain-list constraints"></ul>
+        </div>
+        <div class="tool-section">
+          <h4>Restart / Reload Notes</h4>
+          <ul class="plain-list restart-hints"></ul>
+        </div>
+        <div class="tool-section">
+          <h4>Editable Files</h4>
+          <div class="managed-files"></div>
+        </div>
+      </article>
+    </template>
+
+    <template id="benchCardTemplate">
+      <article class="bench-card">
+        <header class="bench-card-header">
+          <p class="bench-category"></p>
+          <h3 class="bench-title"></h3>
+        </header>
+        <p class="bench-objective"></p>
+        <div class="tool-section">
+          <h4>Prompt</h4>
+          <pre class="prompt-block"></pre>
+        </div>
+        <div class="tool-section">
+          <h4>What to watch</h4>
+          <ul class="plain-list bench-watch-for"></ul>
+        </div>
+        <div class="tool-section">
+          <h4>Expected Paths</h4>
+          <div class="bench-expectations"></div>
+        </div>
+        <div class="tool-section">
+          <h4>Installation Decision</h4>
+          <p class="bench-install-decision"></p>
+        </div>
+        <button type="button" class="button button-small copy-prompt">Copy prompt</button>
+      </article>
+    </template>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

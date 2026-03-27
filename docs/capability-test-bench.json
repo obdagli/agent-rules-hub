@@ -1,0 +1,78 @@
+[
+  {
+    "id": "architecture-brainstorm",
+    "title": "Architecture Brainstorm",
+    "category": "Steering",
+    "objective": "Check whether the CLI chooses planning and clarification behavior without manual slash commands.",
+    "prompt": "I want a dashboard that shows, edits, and validates the active AI rules and skill layers per CLI. Start by clarifying the riskiest ambiguity, then compare two implementation approaches.",
+    "watchFor": [
+      "Starts with a clarifying question or clearly scoped design move before implementation",
+      "Compares multiple approaches instead of jumping straight into code",
+      "Explains tradeoffs in terms of maintainability and control-plane accuracy"
+    ],
+    "expectations": {
+      "codex": "Should start with clarification/planning quality based on its own current local rules and visible skills.",
+      "claude": "Should reflect Claude's currently visible local instruction + plugin state without pretending hidden control.",
+      "gemini": "Should reflect Gemini's currently visible local instruction + extension state without pretending hidden control.",
+      "opencode": "Should reflect OpenCode's current plugin profile; mixed profiles should be described as mixed, not hidden."
+    },
+    "installDecision": "Do not add another planning skill pack unless this benchmark repeatedly fails on the same gap."
+  },
+  {
+    "id": "debug-red-green",
+    "title": "Debugging Discipline",
+    "category": "Workflow Quality",
+    "objective": "Check whether the CLI defaults to a systematic debugging path instead of cargo-cult fixes.",
+    "prompt": "A dashboard action says success, but the generated instruction path still resolves to the old file. Debug it step by step and explain the first proof you need before changing code.",
+    "watchFor": [
+      "Starts by gathering evidence instead of patching blindly",
+      "Names the actual failing invariant",
+      "Separates diagnosis from implementation"
+    ],
+    "expectations": {
+      "codex": "Should demonstrate evidence-first debugging under the current local setup.",
+      "claude": "Should demonstrate evidence-first debugging without relying on plugin-specific assumptions.",
+      "gemini": "Should demonstrate evidence-first debugging while accurately describing extension state.",
+      "opencode": "Should debug systematically and call out any mixed plugin profile when present."
+    },
+    "installDecision": "No extra debugging pack is justified unless the CLI repeatedly skips evidence-gathering."
+  },
+  {
+    "id": "ui-ux-evaluation",
+    "title": "UI / UX Gap Check",
+    "category": "Design",
+    "objective": "Decide whether a separate UI skill pack such as ui-ux-promax is actually needed.",
+    "prompt": "Redesign a local ops dashboard for multi-CLI rule management. Give two distinct visual directions, explain the interaction model, and tell me whether the current stack is enough or if I need an extra UI skill pack.",
+    "watchFor": [
+      "Offers two noticeably different directions instead of one safe default",
+      "Names layout, typography, and interaction decisions explicitly",
+      "Explains why an extra UI skill pack would or would not add value"
+    ],
+    "expectations": {
+      "codex": "Should combine planning discipline with whatever native design judgment it has; the result is a good baseline for deciding on extra UI skills.",
+      "claude": "Should expose Claude design quality without over-claiming plugin control.",
+      "gemini": "Should expose Gemini design quality while accurately describing extension state.",
+      "opencode": "oh-my-opencode should already surface a strong UI/UX path, so this is the main benchmark before installing more UI packs."
+    },
+    "installDecision": "Install a focused UI pack only if this benchmark repeatedly shows weak visual vocabulary or poor design alternatives."
+  },
+  {
+    "id": "control-plane-honesty",
+    "title": "Control Plane Honesty",
+    "category": "Architecture",
+    "objective": "Check whether the CLI stays honest about what is truly centralized versus externally installed.",
+    "prompt": "Explain which parts of this machine's AI setup are truly controlled from one repo and which parts are only observed or configured from there. Be precise and do not oversell it.",
+    "watchFor": [
+      "Separates baseline instructions from external plugins and harnesses",
+      "Calls out shared discovery path coupling where it exists",
+      "Avoids claiming true per-CLI isolation when the platform cannot provide it"
+    ],
+    "expectations": {
+      "codex": "Should mention that ~/.agents/skills is shared with OpenCode.",
+      "claude": "Should mention that the Claude plugin payload is external.",
+      "gemini": "Should mention that the extension is locally linked and therefore editable.",
+      "opencode": "Should mention that harness selection is centralized but harness internals are external packages."
+    },
+    "installDecision": "No new skill pack helps if the real issue is architecture honesty."
+  }
+]
